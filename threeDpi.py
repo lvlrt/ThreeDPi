@@ -39,9 +39,9 @@ if dry_run<1:
     GPIO.setmode(GPIO.BCM)
 
 if dry_run<1:
-    MX=Bipolar_Stepper_Motor(5,25,24,23);     #pin number for a1,a2,b1,b2.  a1 and a2 form coil A; b1 and b2 form coil B
+    MX=Bipolar_Stepper_Motor(5,25,23,24);     #pin number for a1,a2,b1,b2.  a1 and a2 form coil A; b1 and b2 form coil B
 
-    MY=Bipolar_Stepper_Motor(19,13,12,6);
+    MY=Bipolar_Stepper_Motor(19,13,6,12);
 
     MZ=Bipolar_Stepper_Motor(21,20,26,16);
 

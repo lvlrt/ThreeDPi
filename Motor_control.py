@@ -110,8 +110,7 @@ def Motor_Step(stepper1, step1, stepper2, step2, stepper3, step3, stepper4,step4
             time_laps+=dt/6.0; #add to timelaps
 
         next_cnt = min([cnt_micro_step1, cnt_micro_step2, cnt_micro_step3, cnt_micro_step4])#lowest cnt_micro_step #of all
-        #time.sleep(dt*(next_cnt-cnt)-time_laps);# time to sleep for all before next and rest this, only di if not total-micro-step
-        #TODO DEBUG
+        time.sleep(dt*(next_cnt-cnt)-time_laps);# time to sleep for all before next and rest this, only di if not total-micro-step
         cnt = next_cnt
     
     return 0;
