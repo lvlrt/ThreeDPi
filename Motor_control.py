@@ -52,8 +52,8 @@ def Motor_Step(stepper1, step1, stepper2, step2, stepper3, step3, stepper4,step4
     if step4!=0:
         total_micro_step=total_micro_step * step4
 
-    total_micro_step = total_micro_step/reduce(gcd,(step1,step2,step3,step4))
-
+    #total_micro_step = total_micro_step/reduce(gcd,(step1,step2,step3,step4)) #gcd of all, so no optimalisation
+    print('total_micro_step', total_micro_step)
     if step1!=0:
     	micro_step1=total_micro_step/step1
     else:
@@ -70,7 +70,8 @@ def Motor_Step(stepper1, step1, stepper2, step2, stepper3, step3, stepper4,step4
         micro_step4=total_micro_step/step4
     else:
         micro_step4=total_micro_step+100#make it never happen
-
+    print('steps',step1,step2,step3,step4)
+    print('micro_steps',micro_step1, micro_step2,micro_step3,micro_step4)
 ##dit voorgaand stuk is om het aantal micro steps te bepalen ( minimale resolutie van de beweging om het rechtste pad te kunnen uitstippelen)
 ##ik moet dus de total micro steps berekenen van de steps die niet 0 zijn, en diegene die - zijn de microstap groter dan de total micro steps (zodat het nooit wordt uitgevoerd
 
@@ -115,8 +116,10 @@ def Motor_Step(stepper1, step1, stepper2, step2, stepper3, step3, stepper4,step4
             time_laps+=dt/6.0; #add to timelaps
 
         next_cnt = min([cnt_micro_step1, cnt_micro_step2, cnt_micro_step3, cnt_micro_step4])#lowest cnt_micro_step #of all
-        time.sleep(dt*(next_count-cnt)-time_laps);# time to sleep for all before next and rest this, only di if not total-micro-step
-        cnt = next_count
+        print(dt, next_cnt, cnt, time_laps)
+        print('dt*(next_cnt-cnt)-time_laps')
+        time.sleep(dt*(next_cnt-cnt)-time_laps);# time to sleep for all before next and rest this, only di if not total-micro-step
+        cnt = next_cnt
 
     
     
