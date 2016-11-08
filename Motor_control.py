@@ -40,6 +40,8 @@ def Motor_Step(stepper1, step1, stepper2, step2, stepper3, step3, stepper4,step4
 # stepper motor 2 will move one step every [micro_step2] steps
 # So [total_mirco_step]=[micro_step1]*[step1] if step1<>0;  [total_micro_step]=[micro_step2]*[step2] if step2<>0 
     total_micro_step = 1
+    
+    #TODO reduce here, with gcd and reducs
     if step1!=0:
         total_micro_step=total_micro_step * step1
     if step2!=0:
@@ -75,9 +77,15 @@ def Motor_Step(stepper1, step1, stepper2, step2, stepper3, step3, stepper4,step4
 ### voor de 0 waarde is de microstep NULL (en dan programatisch oplosse) of total_micro steps +1
 
     T=sqrt(sqrt(sqrt(step1**2+step2**2)**2+step3**2)**2+step4**2)/speed;      #total time #for all 4
+    print(T); 
     dt=T/total_micro_step;                #time delay every micro_step
-    
+    print(total_micro_step)
+    time.sleep(T);
+    """
     for i in range(1,total_micro_step+1):    #i is the iterator for the micro_step. i cannot start from 0
+        
+        #this is all crazy expensive, idea is to write small gcode in 1 time as an array of commands,
+        print(i)
         time_laps=0;
         if ((i % micro_step1)==0):#motor 1 need to turn one step
             stepper1.move(dir1,1,dt/4.0);
@@ -96,5 +104,5 @@ def Motor_Step(stepper1, step1, stepper2, step2, stepper3, step3, stepper4,step4
             time_laps+=dt/4.0;
         
         time.sleep(dt-time_laps);
-
+        """
     return 0;

@@ -15,7 +15,7 @@ group.add_argument("-m", "--manual", action="store_true", help="Manually control
 parser.add_argument("-d", "--dryrun", type=float, help="Level of dry run")
 args = parser.parse_args()
 
-if args.dryrun > 0:
+if args.dryrun != None:
         dry_run = args.dryrun
 else:
         dry_run = 0
@@ -137,7 +137,7 @@ def moveto(MX,x_pos,dx,MY,y_pos,dy,MZ,z_pos,dz,ME,e_pos,de,speed):
             
     if Total_step>0:
         print('Movement: Dx=', stepx, '  Dy=', stepy, '  Dz=', stepz, '  De=', stepe);
-	if dry_run<1:
+        if dry_run<1:
             Motor_control.Motor_Step(MX,stepx,MY,stepy,MZ,stepz,ME,stepe,speed);
     return 0;
     
@@ -149,15 +149,15 @@ try:#read and execute G code
     if (args.manual == False):
         filename=args.filepath; #file name of the G code commands
         for lines in open(filename,'r'):
-	    print(lines);
-	    if lines==[]:
+            print(lines);
+            if lines==[]:
                 1; #blank lines
             elif lines[0:3]=='G90':
                 print('start');
             elif lines[0:6]=='G92 E0':
                 print('reset extruder');
                 if dry_run<1:
-		    ME.position = 0
+                    ME.position = 0
 
             elif lines[0:3]=='G20':# working in inch;
                 dx/=25.4;
@@ -178,20 +178,20 @@ try:#read and execute G code
                 break;
             elif (lines[0:3]=='G1F')|(lines[0:4]=='G1 F'):
                 1;#do nothing
-	    elif (lines[0:3]=='G00')|(lines[0:3]=='G1 ')|(lines[0:3]=='G01'):#|(lines[0:3]=='G02')|(lines[0:3]=='G03'):
-		if (lines.find('X') != -1 or lines.find('Y') != -1 or lines.find('Z') != -1 ): #Ignore lines not dealing with XY plane
+            elif (lines[0:3]=='G00')|(lines[0:3]=='G1 ')|(lines[0:3]=='G01'):#|(lines[0:3]=='G02')|(lines[0:3]=='G03'):
+                if (lines.find('X') != -1 or lines.find('Y') != -1 or lines.find('Z') != -1 ): #Ignore lines not dealing with XY plane
 		    #linear engraving movement
                     if (lines[0:3]=='G00'):#this is an empty move (stop extruding)
-                    	print('rapid move')
+                        print('rapid move')
                     else:
                         print('not a rapid move')
                     
                     [x_pos,y_pos,z_pos, e_pos, feedrate]=XYZEFposition(lines);
                     if feedrate != 0:
-		    	speed = feedrate/60
-		    print(x_pos,y_pos,z_pos, e_pos, speed);
-		    if dry_run<1:
-		        moveto(MX,x_pos,dx,MY,y_pos,dy,MZ,z_pos,dz,speed);
+                        speed = feedrate/60
+                    print(x_pos,y_pos,z_pos, e_pos, speed);
+                    if dry_run<1:
+                        moveto(MX,x_pos,dx,MY,y_pos,dy,MZ,z_pos,dz,ME,e_pos,de,speed);
                 
             elif (lines[0:3]=='G02')|(lines[0:3]=='G03'): #circular interpolation
                 if (lines.find('X') != -1 and lines.find('Y') != -1 and lines.find('I') != -1 and lines.find('J') != -1):
@@ -202,9 +202,9 @@ try:#read and execute G code
                     [x_pos,y_pos,z_pos, e_pos,feedrate]=XYZEFposition(lines);
                     
                     if feedrate != 0:
-		    	speed = feedrate/60
+                        speed = feedrate/60
 		    
-		    [i_pos,j_pos]=IJposition(lines);
+                    [i_pos,j_pos]=IJposition(lines);
 
                     xcenter=old_x_pos+i_pos;   #center of the circle for interpolation
                     ycenter=old_y_pos+j_pos;
