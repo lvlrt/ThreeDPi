@@ -2,7 +2,8 @@ import RPi.GPIO as GPIO
 import time
 from Bipolar_Stepper_Motor_Class import Bipolar_Stepper_Motor
 from numpy import abs,sqrt
-
+from functools import reduce
+from fractions import gcd
 
 def GCD(a,b):#greatest common diviser
     while b:
@@ -51,6 +52,8 @@ def Motor_Step(stepper1, step1, stepper2, step2, stepper3, step3, stepper4,step4
     if step4!=0:
         total_micro_step=total_micro_step * step4
 
+    total_micro_step = total_micro_step/reduce(gcd,(step1,step2,step3,step4))
+
     if step1!=0:
     	micro_step1=total_micro_step/step1
     else:
@@ -76,24 +79,44 @@ def Motor_Step(stepper1, step1, stepper2, step2, stepper3, step3, stepper4,step4
 ### de micro step is voor alle niet 0 waarden de totaal micro steps gedeeld door het steps van de motor
 ### voor de 0 waarde is de microstep NULL (en dan programatisch oplosse) of total_micro steps +1
 
+
     T=sqrt(sqrt(sqrt(step1**2+step2**2)**2+step3**2)**2+step4**2)/speed;      #total time #for all 4
     print(T); 
     dt=T/total_micro_step;                #time delay every micro_step
     print(total_micro_step)
-    time.sleep(T);
-    
+    print(dt) 
     ###cnt_microstep for each stepper, 1 x microstep
-    
+    cnt_micro_step1 = micro_step1
+    cnt_micro_step2 = micro_step2
+    cnt_micro_step3 = micro_step3
+    cnt_micro_step4 = micro_step4
     cnt=0
-    while cnt<total_micro_step:
-        #for each
-        if cnt == cnt_micro_step4:
-            do movement
-            en cnt_micro_step4 + micro_step4
+    while cnt<=total_micro_step:
+        time_laps=0 #calculate done time
+	#for each
+        if cnt == cnt_micro_step1:
+            stepper1.move(dir1,1,dt/6.0);
+            cnt_micro_step1 += micro_step1
+            time_laps+=dt/6.0; #add to timelaps
 
-        lowest cnt_micro_step #of all
-        calculate time to sleep for all before next and rest this, only di if not total-micro-step
-        cnt = lowest cnt
+        if cnt == cnt_micro_step2:
+            stepper2.move(dir2,1,dt/6.0);
+            cnt_micro_step2 += micro_step2
+            time_laps+=dt/6.0; #add to timelaps
+
+        if cnt == cnt_micro_step3:
+            stepper3.move(dir3,1,dt/6.0);
+            cnt_micro_step3 += micro_step3
+            time_laps+=dt/6.0; #add to timelaps
+
+        if cnt == cnt_micro_step4:
+            stepper4.move(dir4,1,dt/6.0);
+            cnt_micro_step4 += micro_step4
+            time_laps+=dt/6.0; #add to timelaps
+
+        next_cnt = min([cnt_micro_step1, cnt_micro_step2, cnt_micro_step3, cnt_micro_step4])#lowest cnt_micro_step #of all
+        time.sleep(dt*(next_count-cnt)-time_laps);# time to sleep for all before next and rest this, only di if not total-micro-step
+        cnt = next_count
 
     
     
