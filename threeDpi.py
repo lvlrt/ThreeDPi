@@ -30,11 +30,7 @@ import time
 from numpy import pi, sin, cos, sqrt, arccos, arcsin
 
 ################################################################################################
-################################################################################################
-#################                            ###################################################
 #################    Parameters set up       ###################################################
-#################                            ###################################################
-################################################################################################
 ################################################################################################
 
 if dry_run<1:
@@ -179,23 +175,17 @@ try:#read and execute G code
             elif (lines[0:3]=='G1F')|(lines[0:4]=='G1 F'):
                 1;#do nothing
             elif (lines[0:3]=='G00')|(lines[0:3]=='G1 ')|(lines[0:3]=='G01'):#|(lines[0:3]=='G02')|(lines[0:3]=='G03'):
-                if (lines.find('X') != -1 or lines.find('Y') != -1 or lines.find('Z') != -1 ): #Ignore lines not dealing with XY plane
+                if (lines.find('X') != -1 or lines.find('Y') != -1 or lines.find('Z') != -1 or lines.find('E') != -1): #Ignore lines not dealing with XY plane
 		    #linear engraving movement
-                    if (lines[0:3]=='G00'):#this is an empty move (stop extruding)
-                        print('rapid move')
-                    else:
-                        print('not a rapid move')
-                    
                     [x_pos,y_pos,z_pos, e_pos, feedrate]=XYZEFposition(lines);
                     if feedrate != 0:
                         speed = feedrate/60
-                    print(x_pos,y_pos,z_pos, e_pos, speed);
+                    print('move')
                     if dry_run<1:
                         moveto(MX,x_pos,dx,MY,y_pos,dy,MZ,z_pos,dz,ME,e_pos,de,speed);
                 
             elif (lines[0:3]=='G02')|(lines[0:3]=='G03'): #circular interpolation
                 if (lines.find('X') != -1 and lines.find('Y') != -1 and lines.find('I') != -1 and lines.find('J') != -1):
-                    laseron()
                     old_x_pos=x_pos;
                     old_y_pos=y_pos;
 
@@ -269,11 +259,7 @@ try:#read and execute G code
 except KeyboardInterrupt:
     pass
 
-moveto(MX,0,dx,MY,0,dy,50);  # move back to Origin #dont do Z here or E
-
-MX.unhold();
-MY.unhold();
-MZ.unhold();
-
 if dry_run<1:
+    MX.unhold();
+    MX.unhold();
     GPIO.cleanup();

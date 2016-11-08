@@ -4,7 +4,7 @@ from Bipolar_Stepper_Motor_Class import Bipolar_Stepper_Motor
 from numpy import abs,sqrt
 from functools import reduce
 from fractions import gcd
-
+ 
 def GCD(a,b):#greatest common diviser
     while b:
        a, b = b, a%b;
@@ -53,7 +53,6 @@ def Motor_Step(stepper1, step1, stepper2, step2, stepper3, step3, stepper4,step4
         total_micro_step=total_micro_step * step4
 
     #total_micro_step = total_micro_step/reduce(gcd,(step1,step2,step3,step4)) #gcd of all, so no optimalisation
-    print('total_micro_step', total_micro_step)
     if step1!=0:
     	micro_step1=total_micro_step/step1
     else:
@@ -70,8 +69,6 @@ def Motor_Step(stepper1, step1, stepper2, step2, stepper3, step3, stepper4,step4
         micro_step4=total_micro_step/step4
     else:
         micro_step4=total_micro_step+100#make it never happen
-    print('steps',step1,step2,step3,step4)
-    print('micro_steps',micro_step1, micro_step2,micro_step3,micro_step4)
 ##dit voorgaand stuk is om het aantal micro steps te bepalen ( minimale resolutie van de beweging om het rechtste pad te kunnen uitstippelen)
 ##ik moet dus de total micro steps berekenen van de steps die niet 0 zijn, en diegene die - zijn de microstap groter dan de total micro steps (zodat het nooit wordt uitgevoerd
 
@@ -82,10 +79,7 @@ def Motor_Step(stepper1, step1, stepper2, step2, stepper3, step3, stepper4,step4
 
 
     T=sqrt(sqrt(sqrt(step1**2+step2**2)**2+step3**2)**2+step4**2)/speed;      #total time #for all 4
-    print(T); 
     dt=T/total_micro_step;                #time delay every micro_step
-    print(total_micro_step)
-    print(dt) 
     ###cnt_microstep for each stepper, 1 x microstep
     cnt_micro_step1 = micro_step1
     cnt_micro_step2 = micro_step2
@@ -116,35 +110,8 @@ def Motor_Step(stepper1, step1, stepper2, step2, stepper3, step3, stepper4,step4
             time_laps+=dt/6.0; #add to timelaps
 
         next_cnt = min([cnt_micro_step1, cnt_micro_step2, cnt_micro_step3, cnt_micro_step4])#lowest cnt_micro_step #of all
-        print(dt, next_cnt, cnt, time_laps)
-        print('dt*(next_cnt-cnt)-time_laps')
-        time.sleep(dt*(next_cnt-cnt)-time_laps);# time to sleep for all before next and rest this, only di if not total-micro-step
+        #time.sleep(dt*(next_cnt-cnt)-time_laps);# time to sleep for all before next and rest this, only di if not total-micro-step
+        #TODO DEBUG
         cnt = next_cnt
-
     
-    
-    """
-    for i in range(1,total_micro_step+1):    #i is the iterator for the micro_step. i cannot start from 0
-        
-        #this is all crazy expensive, idea is to write small gcode in 1 time as an array of commands,
-        print(i)
-        time_laps=0;
-        if ((i % micro_step1)==0):#motor 1 need to turn one step
-            stepper1.move(dir1,1,dt/4.0);
-            time_laps+=dt/4.0;
-            
-        if ((i % micro_step2)==0):#motor 2 need to turn one step
-            stepper2.move(dir2,1,dt/4.0);
-            time_laps+=dt/4.0;
-
-        if ((i % micro_step3)==0):#motor 3 need to turn one step
-            stepper3.move(dir3,1,dt/4.0);
-            time_laps+=dt/4.0;
-
-        if ((i % micro_step4)==0):#motor 4 need to turn one step
-            stepper4.move(dir4,1,dt/4.0);
-            time_laps+=dt/4.0;
-        
-        time.sleep(dt-time_laps);
-        """
     return 0;
