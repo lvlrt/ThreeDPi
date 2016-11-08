@@ -81,6 +81,22 @@ def Motor_Step(stepper1, step1, stepper2, step2, stepper3, step3, stepper4,step4
     dt=T/total_micro_step;                #time delay every micro_step
     print(total_micro_step)
     time.sleep(T);
+    
+    ###cnt_microstep for each stepper, 1 x microstep
+    
+    cnt=0
+    while cnt<total_micro_step:
+        #for each
+        if cnt == cnt_micro_step4:
+            do movement
+            en cnt_micro_step4 + micro_step4
+
+        lowest cnt_micro_step #of all
+        calculate time to sleep for all before next and rest this, only di if not total-micro-step
+        cnt = lowest cnt
+
+    
+    
     """
     for i in range(1,total_micro_step+1):    #i is the iterator for the micro_step. i cannot start from 0
         
