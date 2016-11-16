@@ -59,6 +59,11 @@ de=0.075; #resolution in e direction. Unit: mm
 
 def XYZEFposition(lines):
     #given a movement command line, return the X Y Z E position
+    x_pos=0
+    y_pos=0
+    z_pos=0
+    e_pos=0
+
     if lines.find('X') != -1:
         xchar_loc=lines.index('X');
         i=xchar_loc+1;
@@ -66,7 +71,8 @@ def XYZEFposition(lines):
             i+=1;
         x_pos=float(lines[xchar_loc+1:i]);    
     else:
-        x_pos=MX.position*dx #this was 0
+        if dry_run<1:
+            x_pos=MX.position*dx #this was 0
     
     if lines.find('Y') != -1:
         ychar_loc=lines.index('Y');
@@ -75,7 +81,8 @@ def XYZEFposition(lines):
             i+=1;
         y_pos=float(lines[ychar_loc+1:i]);    
     else:
-        y_pos=MY.position*dy
+        if dry_run<1:
+            y_pos=MY.position*dy
 
     if lines.find('Z') != -1:
         zchar_loc=lines.index('Z');
@@ -84,7 +91,8 @@ def XYZEFposition(lines):
             i+=1;
         z_pos=float(lines[zchar_loc+1:i]);    
     else:
-    	z_pos=MZ.position*dz
+        if dry_run<1:
+    	    z_pos=MZ.position*dz
 
     if lines.find('E') != -1:
         echar_loc=lines.index('E');
@@ -93,7 +101,8 @@ def XYZEFposition(lines):
             i+=1;
         e_pos=float(lines[echar_loc+1:i]);    
     else:
-    	e_pos=ME.position*de
+        if dry_run<1:
+    	    e_pos=ME.position*de
 
     if lines.find('F') != -1:
         fchar_loc=lines.index('F');
