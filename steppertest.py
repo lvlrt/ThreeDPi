@@ -18,8 +18,8 @@ GPIO.setmode(GPIO.BCM)
 
 #motor=Bipolar_Stepper_Motor(5,25,23,24)
 #motor=Bipolar_Stepper_Motor(19,13,6,12)
-#motor=Bipolar_Stepper_Motor(21,20,26,16)
-motor=Bipolar_Stepper_Motor(22,27,18,17)
+motor=Bipolar_Stepper_Motor(21,20,26,16)
+#motor=Bipolar_Stepper_Motor(22,27,18,17)
 try:
     while True:
         direction = int(input("Input Direction X: "))

@@ -26,6 +26,7 @@ if dry_run<1:
 if dry_run<1:
     import Motor_control
     from Bipolar_Stepper_Motor_Class import Bipolar_Stepper_Motor
+    from Bipolar_Stepper_Motor_Class_Full_Step import Bipolar_Stepper_Motor_Full_Step
 import time
 from numpy import pi, sin, cos, sqrt, arccos, arcsin
 
@@ -43,7 +44,7 @@ if dry_run<1:
 
     MY=Bipolar_Stepper_Motor(19,13,6,12);
 
-    MZ=Bipolar_Stepper_Motor(21,20,26,16);
+    MZ=Bipolar_Stepper_Motor_Full_Step(21,20,26,16);
 
     ME=Bipolar_Stepper_Motor(22,27,18,17);
 
