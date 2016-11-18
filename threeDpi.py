@@ -44,7 +44,7 @@ if dry_run<1:
 
     MY=Bipolar_Stepper_Motor(19,13,6,12);
 
-    MZ=Bipolar_Stepper_Motor_Full_Step(21,20,26,16);
+    MZ=Bipolar_Stepper_Motor(21,20,26,16);
 
     ME=Bipolar_Stepper_Motor(22,27,18,17);
 
@@ -134,6 +134,7 @@ def IJposition(lines):
 
 def moveto(MX,x_pos,dx,MY,y_pos,dy,MZ,z_pos,dz,ME,e_pos,de,speed):
 #Move to (x_pos,y_pos) (in real unit)
+    print(MX.position,MY.position,MZ.position,ME.position)
     stepx=int(round(x_pos/dx))-MX.position;
     stepy=int(round(y_pos/dy))-MY.position;
     stepz=int(round(z_pos/dz))-MZ.position;
@@ -258,10 +259,10 @@ try:#read and execute G code
             else:
                 MY.move(-1,abs(ysteps),0.01)
             if (zsteps > 0):
-                MZ.move(1,abs(zsteps),0.01)
+                MZ.move(1,abs(zsteps),0.2)
             else:
-                MZ.move(-1,abs(zsteps),0.01)
-            if (ysteps > 0):
+                MZ.move(-1,abs(zsteps),0.2)
+            if (esteps > 0):
                 ME.move(1,abs(esteps),0.01)
             else:
                 ME.move(-1,abs(esteps),0.01)
@@ -271,5 +272,5 @@ except KeyboardInterrupt:
 
 if dry_run<1:
     MX.unhold();
-    MX.unhold();
-    GPIO.cleanup();
+    MY.unhold();
+    #GPIO.cleanup();
