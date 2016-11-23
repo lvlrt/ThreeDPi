@@ -5,7 +5,7 @@ import Adafruit_MCP3008
 import RPi.GPIO as GPIO
 import sys
 
-pin=2
+pin=14
 channel=0
 goal_temp=sys.argv[1]
 
@@ -16,16 +16,17 @@ SPI_PORT=0
 SPI_DEVICE=0
 mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(SPI_PORT,SPI_DEVICE))
 
-print('Temprature set to '+goal_temp)
-
-#setup GPIO en pin setup out
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(pin,GPIO.OUT)
+GPIO.setup(pin, GPIO.OUT)
+pwm = GPIO.PWM(pin,1)
+pwm.start(0)
+
+print('Temprature set to '+goal_temp)
 
 lookupfile = open('lookuptable','r')
 lookuptable = {}
 for line in lookupfile:
-    lookuptable[int(line.split(',')[0])]=int(line.split(',')[1].replace('\n',''))
+    lookuptable[1024-(int(line.split(',')[0])+1)]=int(line.split(',')[1].replace('\n',''))
 
 
 def calc_adc_val(temp):
@@ -50,14 +51,17 @@ goal_adc_val = calc_adc_val(goal_temp)
 try:
     while True:
         if mcp.read_adc(channel) < goal_adc_val:
-            GPIO.output(pin,1)
-            print('Heating up... ['+calc_temp(mcp.read_adc(channel))+']')
+            pwm.ChangeDutyCycle(50)
+            #GPIO.output(pin,1)
+            print('Heating up... ['+str(calc_temp(mcp.read_adc(channel)))+']')
         else:
-            GPIO.output(pin,0)
-            print('Temprature reached ['+calc_temp(mcp.read_adc(channel))+']')
+            pwm.ChangeDutyCycle(0)
+            #GPIO.output(pin,0)
+            print('Temprature reached ['+str(calc_temp(mcp.read_adc(channel)))+']')
         time.sleep(1)
 except KeyboardInterrupt:
     #TODO null the pin
+    pwm.stop()
     GPIO.output(pin,0)
     print('Heater turned off')
     pass

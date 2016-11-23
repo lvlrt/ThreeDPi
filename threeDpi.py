@@ -34,6 +34,8 @@ from numpy import pi, sin, cos, sqrt, arccos, arcsin
 #################    Parameters set up       ###################################################
 ################################################################################################
 
+Z_begin_pos = 1 #begin position in mm
+
 if dry_run<1:
     GPIO.setmode(GPIO.BCM)
     GPIO.cleanup();
@@ -46,14 +48,16 @@ if dry_run<1:
 
     MZ=Bipolar_Stepper_Motor(21,20,26,16);
 
-    ME=Bipolar_Stepper_Motor(22,27,18,17);
+    ME=Bipolar_Stepper_Motor(18,17,27,22);
 
 #resolution of motors?? make it an external CONF FILE??
 dx=0.075; #resolution in x direction. Unit: mm
 dy=0.075; #resolution in y direction. Unit: mm
 dz=0.075; #resolution in z direction. Unit: mm
-de=0.075; #resolution in e direction. Unit: mm
+de=0.090; #resolution in e direction. Unit: mm
 
+if dry_run<1:
+    MZ.position = int(round(Z_begin_pos/dz))
 ################################################################################################
 #################    G code reading Functions    ###############################################
 ################################################################################################
