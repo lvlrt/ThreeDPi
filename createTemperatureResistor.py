@@ -54,8 +54,9 @@ class Thermistor:
     def setting(self, t):
         "Convert a temperature into a ADC value"
         r = self.r0 * exp(self.beta * (1 / (t + 273.15) - 1 / self.t0)) # resistance of the thermistor
+        return r
         v = self.vs * r / (self.rs + r)     # the voltage at the potential divider
-        return round(v / self.vadc * 1024)  # the ADC reading
+        #return round(v / self.vadc * 1024)  # the ADC reading
 
 def main(argv):
 
@@ -108,8 +109,8 @@ def main(argv):
     #        print "%s,%s" % (adc, int(t.temp(adc)))
     #    else:
     #        print "%s,%s" % (adc, int(t.temp(adc)))
-   
-    print(t.setting(25))
+    for i in range(0,700):
+        print(str(i)+','+ str(t.setting(i))+','+str((t.setting(i))/3.15))
 def usage():
     print __doc__
 

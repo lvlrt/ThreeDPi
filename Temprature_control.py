@@ -5,59 +5,73 @@ import Adafruit_MCP3008
 import RPi.GPIO as GPIO
 import sys
 
-pin=14
-channel=0
 goal_temp=sys.argv[1]
 
-fixed_R=4700
-max_adc=1023
-
-SPI_PORT=0
-SPI_DEVICE=0
-mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(SPI_PORT,SPI_DEVICE))
-
+pin=15
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pin, GPIO.OUT)
 pwm = GPIO.PWM(pin,1)
 pwm.start(0)
 
+a_pin = 8
+b_pin = 9
+
+def discharge():
+  GPIO.setup(a_pin, GPIO.IN)
+  GPIO.setup(b_pin, GPIO.OUT)
+  GPIO.output(b_pin, False)
+  time.sleep(0.005)
+
+def charge_time():
+  GPIO.setup(b_pin, GPIO.IN)
+  GPIO.setup(a_pin, GPIO.OUT)
+  count = 0
+  GPIO.output(a_pin, True)
+  while not GPIO.input(b_pin):
+    count = count + 1
+  return count
+
 print('Temprature set to '+goal_temp)
 
-lookupfile = open('lookuptable','r')
+lookupfile = open('temp_resistor_val_table','r')
 lookuptable = {}
-for line in lookupfile:
-    lookuptable[1024-(int(line.split(',')[0])+1)]=int(line.split(',')[1].replace('\n',''))
+for line in lookupfile: #get a lookuptable with the key the temp and the value the time value to fill the capacitor to a 1.65V
+    lookuptable[float(line.split(',')[0])]=float(line.split(',')[2].replace('\n',''))
 
-
-def calc_adc_val(temp):
+def calc_ttfc(temp):
     
-    #TODO resistance??
     #adc_val=R/(R+fixed_R)*max_adc
-    for adc_val,t in lookuptable.items():
+    for t,ttfc in lookuptable.items():
+        print(t)
         if t==int(temp):
-            print(temp+' equals to adc of ',adc_val)
-            return adc_val
+            print(temp+' equals to ttfc of ',ttfc)
+            return ttfc
 
-def calc_temp(adc_val):
+def calc_temp(v):
     #R=fixed_R/(max_adc/adc_val-1)
     #TODO resistance to temp
-    if adc_val in lookuptable:
-        return lookuptable[adc_val]
-    else:
-        return ''
+    diff = float('inf')
+    for temperature,ttfc in lookuptable.items():
+        if diff > abs(v-ttfc):
+            diff=abs(v-ttfc)
+            x=temperature
+    return x
 
-goal_adc_val = calc_adc_val(goal_temp)
+goal_ttfc = calc_ttfc(goal_temp)
 
 try:
     while True:
-        if mcp.read_adc(channel) < goal_adc_val:
+        discharge()
+        ttfc=charge_time()
+        discharge()
+        if ttfc > goal_ttfc:
             pwm.ChangeDutyCycle(50)
             #GPIO.output(pin,1)
-            print('Heating up... ['+str(calc_temp(mcp.read_adc(channel)))+']')
+            print('Heating up... ['+str(calc_temp(ttfc))+']')
         else:
             pwm.ChangeDutyCycle(0)
             #GPIO.output(pin,0)
-            print('Temprature reached ['+str(calc_temp(mcp.read_adc(channel)))+']')
+            print('Temprature reached ['+str(calc_temp(ttfc))+']')
         time.sleep(1)
 except KeyboardInterrupt:
     #TODO null the pin
