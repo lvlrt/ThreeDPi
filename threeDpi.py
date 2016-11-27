@@ -48,7 +48,7 @@ if dry_run<1:
 
     MZ=Bipolar_Stepper_Motor(21,20,26,16);
 
-    ME=Bipolar_Stepper_Motor(18,17,27,22);
+    ME=Bipolar_Stepper_Motor(27,17,7,22);
 
 #resolution of motors?? make it an external CONF FILE??
 dx=0.075; #resolution in x direction. Unit: mm

@@ -7,11 +7,11 @@ import sys
 
 goal_temp=sys.argv[1]
 
-pin=15
+pin=10
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pin, GPIO.OUT)
-pwm = GPIO.PWM(pin,1)
-pwm.start(0)
+#pwm = GPIO.PWM(pin,1)
+#pwm.start(0)
 
 a_pin = 8
 b_pin = 9
@@ -42,7 +42,6 @@ def calc_ttfc(temp):
     
     #adc_val=R/(R+fixed_R)*max_adc
     for t,ttfc in lookuptable.items():
-        print(t)
         if t==int(temp):
             print(temp+' equals to ttfc of ',ttfc)
             return ttfc
@@ -65,17 +64,16 @@ try:
         ttfc=charge_time()
         discharge()
         if ttfc > goal_ttfc:
-            pwm.ChangeDutyCycle(50)
-            #GPIO.output(pin,1)
+            #pwm.ChangeDutyCycle(50)
+            GPIO.output(pin,1)
             print('Heating up... ['+str(calc_temp(ttfc))+']')
         else:
-            pwm.ChangeDutyCycle(0)
-            #GPIO.output(pin,0)
+            #pwm.ChangeDutyCycle(0)
+            GPIO.output(pin,0)
             print('Temprature reached ['+str(calc_temp(ttfc))+']')
         time.sleep(1)
 except KeyboardInterrupt:
-    #TODO null the pin
-    pwm.stop()
+    #pwm.stop()
     GPIO.output(pin,0)
     print('Heater turned off')
     pass
