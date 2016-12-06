@@ -34,7 +34,7 @@ from numpy import pi, sin, cos, sqrt, arccos, arcsin
 #################    Parameters set up       ###################################################
 ################################################################################################
 
-Z_begin_pos = 1 #begin position in mm
+Z_begin_pos =0 #begin position in mm
 
 if dry_run<1:
     GPIO.setmode(GPIO.BCM)
@@ -48,13 +48,15 @@ if dry_run<1:
 
     MZ=Bipolar_Stepper_Motor(21,20,26,16);
 
-    ME=Bipolar_Stepper_Motor(27,17,7,22);
+    ME=Bipolar_Stepper_Motor_Full_Step(27,17,7,22);
 
 #resolution of motors?? make it an external CONF FILE??
 dx=0.075; #resolution in x direction. Unit: mm
 dy=0.075; #resolution in y direction. Unit: mm
 dz=0.075; #resolution in z direction. Unit: mm
-de=0.090; #resolution in e direction. Unit: mm
+#de=0.0585; #resolution in e direction. Unit: mm
+#de=0.1170; latest 0.4 nozzle
+de=36/200
 
 if dry_run<1:
     MZ.position = int(round(Z_begin_pos/dz))
@@ -160,7 +162,11 @@ try:#read and execute G code
     if (args.manual == False):
         filename=args.filepath; #file name of the G code commands
         for lines in open(filename,'r'):
+
+            #DEBUG
             print(lines);
+            #input("Press Enter") 
+
             if lines==[]:
                 1; #blank lines
             elif lines[0:3]=='G90':
@@ -169,6 +175,7 @@ try:#read and execute G code
                 print('reset extruder');
                 if dry_run<1:
                     ME.position = 0
+                    print('reset extruder');
 
             elif lines[0:3]=='G20':# working in inch;
                 dx/=25.4;
@@ -267,9 +274,9 @@ try:#read and execute G code
             else:
                 MZ.move(-1,abs(zsteps),0.2)
             if (esteps > 0):
-                ME.move(1,abs(esteps),0.01)
+                ME.move(1,abs(esteps),0.02)
             else:
-                ME.move(-1,abs(esteps),0.01)
+                ME.move(-1,abs(esteps),0.02)
 
 except KeyboardInterrupt:
     pass

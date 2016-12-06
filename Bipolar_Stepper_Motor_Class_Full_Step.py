@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 import time
 
 #sequence for a1, b2, a2, b1
-phase_seq=[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]];
+phase_seq=[[1,1,0,0],[0,1,1,0],[0,0,1,1],[1,0,0,1]];
 #full step sequence. maximum torque
 #phase_seq=[[1,0,0,0],[1,1,0,0],[0,1,0,0],[0,1,1,0],[0,0,1,0],[0,0,1,1],[0,0,0,1],[1,0,0,1]]
 #half-step sequence. double resolution. But the torque of the stepper motor is not constant 
@@ -44,6 +44,19 @@ class Bipolar_Stepper_Motor_Full_Step:
     def move(self, dirction, steps, delay=0.2):
         for _ in range(steps):
             next_phase=(self.phase+dirction) % num_phase;
+            
+            if phase_seq[next_phase][0] ==1:
+                GPIO.output(self.a1,phase_seq[next_phase][0]);
+            
+            if phase_seq[next_phase][1] ==1:
+                GPIO.output(self.b2,phase_seq[next_phase][1]);
+            
+            if phase_seq[next_phase][2] ==1:
+                GPIO.output(self.a2,phase_seq[next_phase][2]);
+            
+            if phase_seq[next_phase][3] ==1:
+                GPIO.output(self.b1,phase_seq[next_phase][3]);
+            
             
             GPIO.output(self.a1,phase_seq[next_phase][0]);
             GPIO.output(self.b2,phase_seq[next_phase][1]);
